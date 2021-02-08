@@ -1,0 +1,15 @@
+params:
+    stride: 4
+    resize: 1
+    return_all: True
+    save_faces: True
+    plot_landmarks: False
+    profiling: True
+
+model:
+    margin: 20
+    factor: 0.6
+    keep_all: True
+    post_process: False
+    confidence: 0.9
+    min_face_size: 40
