@@ -1,5 +1,6 @@
-from facenet_pytorch import MTCNN, InceptionResnetV1, fixed_image_standardization, training, extract_face
 import cv2
+from facenet_pytorch import MTCNN
+import time
 
 
 class FastMTCNN(object):
@@ -21,7 +22,7 @@ class FastMTCNN(object):
         self.resize = resize
         self.mtcnn = MTCNN(*args, **kwargs)
 
-    def __call__(self, frames, save_faces, id, outdir):
+    def __call__(self, frames, save_faces, id, outdir, return_all):
         """Detect faces in frames using strided MTCNN."""
         if self.resize != 1:
             frames = [
@@ -29,10 +30,9 @@ class FastMTCNN(object):
                 for f in frames
             ]
         if save_faces:
-            save_paths = [f'{outdir}/{id}_{i}.jpg' for i in range(len(frames))]
+            save_paths = [f'{outdir}/{id}_{round(time.time() + i)}.jpg' for i in range(len(frames))]
         else:
             save_paths = None
-        faces, probs = self.mtcnn(frames[::self.stride], save_path=save_paths, return_prob=True)
+        faces, probs, boxes, points = self.mtcnn(frames, save_path=save_paths, return_all=return_all)
 
-        return faces, probs
-
+        return faces, probs, boxes, points
