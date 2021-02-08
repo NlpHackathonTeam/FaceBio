@@ -3,7 +3,7 @@ import glob
 
 import torch
 
-from brain import FaceDetection
+from src.brain import FaceDetection
 from utils.config import Config
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'

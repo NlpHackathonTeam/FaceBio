@@ -7,7 +7,7 @@ from PIL import Image
 from imutils.video import VideoStream
 from tqdm import tqdm
 
-from model import FastMTCNN
+from src.model import FastMTCNN
 from utils import utils
 from utils.profiler import FPS
 
