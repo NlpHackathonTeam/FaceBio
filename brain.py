@@ -30,7 +30,8 @@ class FaceDetection:
             *args, **kwargs
         )
 
-    def run_detection_from_image(self, filenames, save_faces, outdir, plot_landmarks=False):
+    def run_detection_from_image(self, filenames, save_faces=True, outdir='./',
+                                 plot_landmarks=False):
 
         for filename in tqdm(filenames):
 
@@ -59,8 +60,8 @@ class FaceDetection:
             cv2.imshow('Image', image_array / 255.0)
             cv2.waitKey(0)
 
-    def run_detection_from_video_file(self, video_file, outDir, save_faces=True, profiling=False,
-                                      plot_landmarks=False):
+    def run_detection_from_video_file(self, video_file, outdir='./', save_faces=True,
+                                      profiling=False, plot_landmarks=False):
 
         print("[INFO] Loading video file")
         cap = cv2.VideoCapture(video_file)
@@ -80,7 +81,7 @@ class FaceDetection:
                 faces, probs, bounding_boxes, landmarks = self.fast_mtcnn(frame,
                                                                           save_faces=save_faces,
                                                                           id=self.uuid,
-                                                                          outdir=outDir,
+                                                                          outdir=outdir,
                                                                           return_all=self.return_all)
                 if faces is not None:
                     faces_detected += len(faces)
@@ -111,7 +112,7 @@ class FaceDetection:
         if profiling:
             print(f"Average FPS: {profiler.fps():.3f}")
 
-    def run_detection_from_webcam_stream(self, save_faces, outdir, profiling=False,
+    def run_detection_from_webcam_stream(self, save_faces=True, outdir='./', profiling=False,
                                          plot_landmarks=False):
 
         # initialize the video stream and allow the camera sensor to warm up
