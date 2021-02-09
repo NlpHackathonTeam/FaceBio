@@ -31,7 +31,7 @@ class FaceDetection:
         )
 
     def run_detection_from_image(self, filenames, save_faces=True, outdir='./',
-                                 plot_landmarks=False):
+                                 plot_landmarks=False, show_frame=False):
 
         for filename in tqdm(filenames):
 
@@ -56,9 +56,10 @@ class FaceDetection:
             except:
                 pass
 
-            # shoe the image
-            cv2.imshow('Image', image_array / 255.0)
-            cv2.waitKey(0)
+            # show the image
+            if show_frame:
+                cv2.imshow('Image', image_array / 255.0)
+                cv2.waitKey(0)
 
     def run_detection_from_video_file(self, video_file, outdir='./', save_faces=True,
                                       profiling=False, plot_landmarks=False):
