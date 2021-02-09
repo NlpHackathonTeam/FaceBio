@@ -59,8 +59,8 @@ if __name__ == '__main__':
                                                  "file. It assumes that sox in installed on "
                                                  "your system")
     parser.add_argument("-i", "--input", type=str, required=False,
-                        default='/Users/igkinis/Desktop/projects/faceBIO/data/lfw/lfw/Aaron_Guiel/Aaron_Guiel_0001.jpg',
-                        #default='/Users/igkinis/Desktop/projects/faceBIO/data/input/video2.mp4',
+                        #default='/Users/igkinis/Desktop/projects/faceBIO/data/lfw/lfw/Aaron_Guiel/Aaron_Guiel_0001.jpg',
+                        default='/Users/igkinis/Desktop/projects/faceBIO/data/input/video2.mp4',
                         help="Input speaker ids file (with counts of clips)")
     parser.add_argument("-m", "--mode", type=str, required=True,
                         default='image',
