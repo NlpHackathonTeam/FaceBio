@@ -13,3 +13,5 @@ model:
     post_process: False
     confidence: 0.9
     min_face_size: 40
+    convert2rt: False
+    load2rt: True

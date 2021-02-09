@@ -1,10 +1,7 @@
 import time
-from imutils.video import FileVideoStream, VideoStream
-from tqdm import tqdm
-from model import FastMTCNN
-from utils.decorators import timer_wrap
+from imutils.video import VideoStream
+from src.model import FastMTCNN
 import imutils
-from PIL import Image
 from utils import utils
 import cv2
 

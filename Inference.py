@@ -3,7 +3,7 @@ import glob
 
 import torch
 
-from brain import FaceDetection
+from src.brain import FaceDetection
 from utils.config import Config
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -23,6 +23,8 @@ def main(args):
         confidence=cfg.config["model"]["confidence"],
         min_face_size=cfg.config["model"]["min_face_size"],
         return_all=cfg.config["params"]["return_all"],
+        convert2rt=cfg.config["model"]["convert2rt"],
+        load2rt=cfg.config["model"]["load2rt"],
         device=device,
         uuid=args.user_id
     )
