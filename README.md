@@ -12,19 +12,26 @@ This is a repository for face detection on edge devices using an efficient pre-t
 1. Install:
 
     ```bash
-    # clone this repo, removing the '-' to allow python imports:
-    git clone https://github.com/timesler/facenet-pytorch.git facenet_pytorch
+    # clone this repo:
+    git clone https://github.com/NlpHackathonTeam/FaceBio.git
     
-    # create a virtual environment
-    python3 -m venv path_to_virtual_envs/name_of_venv
+    # create a virtual environment:
+    pip3 install virtualenv
+    python3 -m venv <path_to_virtual_envs>/<myenvname> 
     
-    # activate path
-    source path_to_virtual_envs/name_of_venv/bin/activate
+    # activate path:
+    source <path_to_virtual_envs>/<myenvname>/bin/activate
     
-    # install the required packages
+    # install the required packages:
     pip install -r requirements
-    
     ```
+   #### TensorRT conversion
+    In order to use conversion of torch models to TensorRT first you need to install
+    [tortch2rt](https://github.com/NVIDIA-AI-IOT/torch2trt). To trigger this functionality
+    you need to activate the appropriate variables in config.yaml file. If it is the first
+    parse you need to activate **convert2rt** variable, otherwise if you already converted
+    and saved the models as TensorRT modules you just need to activate **load2rt** variable
+    and deactivate **convert2rt**.
 
 2. How to run:
 
@@ -38,10 +45,10 @@ This is a repository for face detection on edge devices using an efficient pre-t
         * Real time Face detection by using webcam: use --mode webcam no --input is required
         * Reat time Face detection by Rasberry Pi cam: Not implemented yet  
 
-   * In order to be able to run the recipe you need to define a __yaml configuration__ file.  
+   * In order to be able to run the recipe you need to define a **yaml configuration** file.  
    A configuration with the baseline parameteres is included in this repo but feel free to create your own.
 
-   * Also, is not required but it is preferable to pass a __user-id__ every time you call it in order to make proper
+   * Also, is not required but it is preferable to pass a **user-id** every time you call it in order to make proper
    output names for the detected faces: userID_timestamp.jpg
 
 3. Further Steps needed:
