@@ -1,5 +1,5 @@
 import cv2
-from facenet_pytorch import MTCNN
+from src.mtcnn import MTCNN
 import time
 
 
