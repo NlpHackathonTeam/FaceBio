@@ -1,157 +1,12 @@
-import torch
-from torch import nn
-import numpy as np
 import os
 
+import numpy as np
+import torch
+from torch import nn
+
+from facenet_pytorch.models.mtcnn import PNet, ONet, RNet
 from facenet_pytorch.models.utils.detect_face import detect_face, extract_face
-
-
-class PNet(nn.Module):
-    """MTCNN PNet.
-    
-    Keyword Arguments:
-        pretrained {bool} -- Whether or not to load saved pretrained weights (default: {True})
-    """
-
-    def __init__(self, pretrained=True):
-        super().__init__()
-
-        self.conv1 = nn.Conv2d(3, 10, kernel_size=3)
-        self.prelu1 = nn.PReLU(10)
-        self.pool1 = nn.MaxPool2d(2, 2, ceil_mode=True)
-        self.conv2 = nn.Conv2d(10, 16, kernel_size=3)
-        self.prelu2 = nn.PReLU(16)
-        self.conv3 = nn.Conv2d(16, 32, kernel_size=3)
-        self.prelu3 = nn.PReLU(32)
-        self.conv4_1 = nn.Conv2d(32, 2, kernel_size=1)
-        self.softmax4_1 = nn.Softmax(dim=1)
-        self.conv4_2 = nn.Conv2d(32, 4, kernel_size=1)
-
-        self.training = False
-
-        if pretrained:
-            state_dict_path = os.path.join(os.path.dirname(__file__), '../facenet_pytorch/data/pnet.pt')
-            state_dict = torch.load(state_dict_path)
-            self.load_state_dict(state_dict)
-
-    def forward(self, x):
-        x = self.conv1(x)
-        x = self.prelu1(x)
-        x = self.pool1(x)
-        x = self.conv2(x)
-        x = self.prelu2(x)
-        x = self.conv3(x)
-        x = self.prelu3(x)
-        a = self.conv4_1(x)
-        a = self.softmax4_1(a)
-        b = self.conv4_2(x)
-        return b, a
-
-
-class RNet(nn.Module):
-    """MTCNN RNet.
-    
-    Keyword Arguments:
-        pretrained {bool} -- Whether or not to load saved pretrained weights (default: {True})
-    """
-
-    def __init__(self, pretrained=True):
-        super().__init__()
-
-        self.conv1 = nn.Conv2d(3, 28, kernel_size=3)
-        self.prelu1 = nn.PReLU(28)
-        self.pool1 = nn.MaxPool2d(3, 2, ceil_mode=True)
-        self.conv2 = nn.Conv2d(28, 48, kernel_size=3)
-        self.prelu2 = nn.PReLU(48)
-        self.pool2 = nn.MaxPool2d(3, 2, ceil_mode=True)
-        self.conv3 = nn.Conv2d(48, 64, kernel_size=2)
-        self.prelu3 = nn.PReLU(64)
-        self.dense4 = nn.Linear(576, 128)
-        self.prelu4 = nn.PReLU(128)
-        self.dense5_1 = nn.Linear(128, 2)
-        self.softmax5_1 = nn.Softmax(dim=1)
-        self.dense5_2 = nn.Linear(128, 4)
-
-        self.training = False
-
-        if pretrained:
-            state_dict_path = os.path.join(os.path.dirname(__file__), '../facenet_pytorch/data/rnet.pt')
-            state_dict = torch.load(state_dict_path)
-            self.load_state_dict(state_dict)
-
-    def forward(self, x):
-        x = self.conv1(x)
-        x = self.prelu1(x)
-        x = self.pool1(x)
-        x = self.conv2(x)
-        x = self.prelu2(x)
-        x = self.pool2(x)
-        x = self.conv3(x)
-        x = self.prelu3(x)
-        x = x.permute(0, 3, 2, 1).contiguous()
-        x = self.dense4(x.view(x.shape[0], -1))
-        x = self.prelu4(x)
-        a = self.dense5_1(x)
-        a = self.softmax5_1(a)
-        b = self.dense5_2(x)
-        return b, a
-
-
-class ONet(nn.Module):
-    """MTCNN ONet.
-    
-    Keyword Arguments:
-        pretrained {bool} -- Whether or not to load saved pretrained weights (default: {True})
-    """
-
-    def __init__(self, pretrained=True):
-        super().__init__()
-
-        self.conv1 = nn.Conv2d(3, 32, kernel_size=3)
-        self.prelu1 = nn.PReLU(32)
-        self.pool1 = nn.MaxPool2d(3, 2, ceil_mode=True)
-        self.conv2 = nn.Conv2d(32, 64, kernel_size=3)
-        self.prelu2 = nn.PReLU(64)
-        self.pool2 = nn.MaxPool2d(3, 2, ceil_mode=True)
-        self.conv3 = nn.Conv2d(64, 64, kernel_size=3)
-        self.prelu3 = nn.PReLU(64)
-        self.pool3 = nn.MaxPool2d(2, 2, ceil_mode=True)
-        self.conv4 = nn.Conv2d(64, 128, kernel_size=2)
-        self.prelu4 = nn.PReLU(128)
-        self.dense5 = nn.Linear(1152, 256)
-        self.prelu5 = nn.PReLU(256)
-        self.dense6_1 = nn.Linear(256, 2)
-        self.softmax6_1 = nn.Softmax(dim=1)
-        self.dense6_2 = nn.Linear(256, 4)
-        self.dense6_3 = nn.Linear(256, 10)
-
-        self.training = False
-
-        if pretrained:
-            state_dict_path = os.path.join(os.path.dirname(__file__), '../facenet_pytorch/data/onet.pt')
-            state_dict = torch.load(state_dict_path)
-            self.load_state_dict(state_dict)
-
-    def forward(self, x):
-        x = self.conv1(x)
-        x = self.prelu1(x)
-        x = self.pool1(x)
-        x = self.conv2(x)
-        x = self.prelu2(x)
-        x = self.pool2(x)
-        x = self.conv3(x)
-        x = self.prelu3(x)
-        x = self.pool3(x)
-        x = self.conv4(x)
-        x = self.prelu4(x)
-        x = x.permute(0, 3, 2, 1).contiguous()
-        x = self.dense5(x.view(x.shape[0], -1))
-        x = self.prelu5(x)
-        a = self.dense6_1(x)
-        a = self.softmax6_1(a)
-        b = self.dense6_2(x)
-        c = self.dense6_3(x)
-        return b, c, a
+from torch2trt import TRTModule, torch2trt
 
 
 class MTCNN(nn.Module):
@@ -195,12 +50,15 @@ class MTCNN(nn.Module):
     """
 
     def __init__(
-        self, image_size=160, margin=0, min_face_size=20,
-        thresholds=[0.6, 0.7, 0.7], factor=0.709, post_process=True,
-        select_largest=True, selection_method=None, keep_all=False, device=None, confidence=0.9, convert2rt=False, load2rt=False
+            self, image_size=160, margin=0, min_face_size=20,
+            thresholds=None, factor=0.709, post_process=True, select_largest=True,
+            selection_method=None, keep_all=False, device=None, confidence=0.9, convert2rt=False,
+            load2rt=False
     ):
         super().__init__()
 
+        if thresholds is None:
+            thresholds = [0.6, 0.7, 0.7]
         self.image_size = image_size
         self.margin = margin
         self.min_face_size = min_face_size
@@ -215,9 +73,31 @@ class MTCNN(nn.Module):
         self.convert2rt = convert2rt
         self.load2rt = load2rt
 
-        self.pnet = PNet()
-        self.rnet = RNet()
-        self.onet = ONet()
+        if convert2rt:
+            self.pnet = PNet()
+            self.rnet = RNet()
+            self.onet = ONet()
+            # create example data
+            x = torch.ones((1, 3, 224, 224)).cuda()
+            # convert to TensorRT feeding sample data as input
+            self.pnet = torch2trt(self.pnet, [x])
+            self.rnet = torch2trt(self.rnet, [x])
+            self.onet = torch2trt(self.onet, [x])
+
+            torch.save(self.pnet.state_dict(), 'pretrained_models/pnet_trt.pth')
+            torch.save(self.rnet.state_dict(), 'pretrained_models/rnet_trt.pth')
+            torch.save(self.onet.state_dict(), 'pretrained_models/onet_trt.pth')
+        elif load2rt:
+            self.pnet = TRTModule()
+            self.rnet = TRTModule()
+            self.onet = TRTModule()
+            self.pnet.load_state_dict(torch.load('pretrained_models/pnet_trt.pth'))
+            self.rnet.load_state_dict(torch.load('pretrained_models/rnet_trt.pth'))
+            self.onet.load_state_dict(torch.load('pretrained_models/onet_trt.pth'))
+        else:
+            self.pnet = PNet()
+            self.rnet = RNet()
+            self.onet = ONet()
 
         self.device = torch.device('cpu')
         if device is not None:
@@ -345,9 +225,9 @@ class MTCNN(nn.Module):
         points = np.array(points)
 
         if (
-            not isinstance(img, (list, tuple)) and 
-            not (isinstance(img, np.ndarray) and len(img.shape) == 4) and
-            not (isinstance(img, torch.Tensor) and len(img.shape) == 4)
+                not isinstance(img, (list, tuple)) and
+                not (isinstance(img, np.ndarray) and len(img.shape) == 4) and
+                not (isinstance(img, torch.Tensor) and len(img.shape) == 4)
         ):
             boxes = boxes[0]
             probs = probs[0]
@@ -359,8 +239,8 @@ class MTCNN(nn.Module):
         return boxes, probs
 
     def select_boxes(
-        self, all_boxes, all_probs, all_points, imgs, method='probability', threshold=0.9,
-        center_weight=2.0
+            self, all_boxes, all_probs, all_points, imgs, method='probability', threshold=0.9,
+            center_weight=2.0
     ):
         """Selects a single box from multiple for a given image using one of multiple heuristics.
 
@@ -389,7 +269,7 @@ class MTCNN(nn.Module):
                     for n images. Ix0 array of probabilities for each box, array of landmark points.
         """
 
-        #copying batch detection from extract, but would be easier to ensure detect creates consistent output.
+        # copying batch detection from extract, but would be easier to ensure detect creates consistent output.
         batch_mode = True
         if (
                 not isinstance(imgs, (list, tuple)) and
@@ -404,33 +284,36 @@ class MTCNN(nn.Module):
 
         selected_boxes, selected_probs, selected_points = [], [], []
         for boxes, points, probs, img in zip(all_boxes, all_points, all_probs, imgs):
-            
+
             if boxes is None:
                 selected_boxes.append(None)
                 selected_probs.append([None])
                 selected_points.append(None)
                 continue
-            
+
             # If at least 1 box found
             boxes = np.array(boxes)
             probs = np.array(probs)
             points = np.array(points)
-                
+
             if method == 'largest':
-                box_order = np.argsort((boxes[:, 2] - boxes[:, 0]) * (boxes[:, 3] - boxes[:, 1]))[::-1]
+                box_order = np.argsort((boxes[:, 2] - boxes[:, 0]) * (boxes[:, 3] - boxes[:, 1]))[
+                            ::-1]
             elif method == 'probability':
                 box_order = np.argsort(probs)[::-1]
             elif method == 'center_weighted_size':
                 box_sizes = (boxes[:, 2] - boxes[:, 0]) * (boxes[:, 3] - boxes[:, 1])
-                img_center = (img.width / 2, img.height/2)
-                box_centers = np.array(list(zip((boxes[:, 0] + boxes[:, 2]) / 2, (boxes[:, 1] + boxes[:, 3]) / 2)))
+                img_center = (img.width / 2, img.height / 2)
+                box_centers = np.array(
+                    list(zip((boxes[:, 0] + boxes[:, 2]) / 2, (boxes[:, 1] + boxes[:, 3]) / 2)))
                 offsets = box_centers - img_center
                 offset_dist_squared = np.sum(np.power(offsets, 2.0), 1)
                 box_order = np.argsort(box_sizes - offset_dist_squared * center_weight)[::-1]
             elif method == 'largest_over_threshold':
                 box_mask = probs > threshold
                 boxes = boxes[box_mask]
-                box_order = np.argsort((boxes[:, 2] - boxes[:, 0]) * (boxes[:, 3] - boxes[:, 1]))[::-1]
+                box_order = np.argsort((boxes[:, 2] - boxes[:, 0]) * (boxes[:, 3] - boxes[:, 1]))[
+                            ::-1]
                 if sum(box_mask) == 0:
                     selected_boxes.append(None)
                     selected_probs.append([None])
@@ -520,7 +403,6 @@ def fixed_image_standardization(image_tensor):
 def prewhiten(x):
     mean = x.mean()
     std = x.std()
-    std_adj = std.clamp(min=1.0/(float(x.numel())**0.5))
+    std_adj = std.clamp(min=1.0 / (float(x.numel()) ** 0.5))
     y = (x - mean) / std_adj
     return y
-
