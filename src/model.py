@@ -1,5 +1,5 @@
 import cv2
-from facenet_pytorch import MTCNN
+from src.mtcnn import MTCNN
 import time
 
 
@@ -33,6 +33,6 @@ class FastMTCNN(object):
             save_paths = [f'{outdir}/{id}_{round(time.time() + i)}.jpg' for i in range(len(frames))]
         else:
             save_paths = None
-        faces, probs, boxes, points = self.mtcnn(frames, save_path=save_paths, return_all=return_all)
+        faces, probs, boxes, points = self.mtcnn(frames[::self.stride], save_path=save_paths, return_all=return_all)
 
         return faces, probs, boxes, points

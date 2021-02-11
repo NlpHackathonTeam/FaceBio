@@ -1,5 +1,5 @@
 params:
-    stride: 4
+    stride: 1
     resize: 1
     return_all: True
     save_faces: True
@@ -11,7 +11,7 @@ model:
     factor: 0.6
     keep_all: True
     post_process: False
-    confidence: 0.9
+    confidence: 0.8
     min_face_size: 40
     convert2rt: False
-    load2rt: True
+    load2rt: False
