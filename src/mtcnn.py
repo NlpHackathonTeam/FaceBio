@@ -3,10 +3,8 @@ import os
 import numpy as np
 import torch
 from torch import nn
-
 from facenet_pytorch.models.mtcnn import PNet, ONet, RNet
 from facenet_pytorch.models.utils.detect_face import detect_face, extract_face
-from torch2trt import TRTModule, torch2trt
 
 
 class MTCNN(nn.Module):
@@ -73,31 +71,9 @@ class MTCNN(nn.Module):
         self.convert2rt = convert2rt
         self.load2rt = load2rt
 
-        if convert2rt:
-            self.pnet = PNet()
-            self.rnet = RNet()
-            self.onet = ONet()
-            # create example data
-            x = torch.ones((1, 3, 224, 224)).cuda()
-            # convert to TensorRT feeding sample data as input
-            self.pnet = torch2trt(self.pnet, [x])
-            self.rnet = torch2trt(self.rnet, [x])
-            self.onet = torch2trt(self.onet, [x])
-
-            torch.save(self.pnet.state_dict(), 'pretrained_models/pnet_trt.pth')
-            torch.save(self.rnet.state_dict(), 'pretrained_models/rnet_trt.pth')
-            torch.save(self.onet.state_dict(), 'pretrained_models/onet_trt.pth')
-        elif load2rt:
-            self.pnet = TRTModule()
-            self.rnet = TRTModule()
-            self.onet = TRTModule()
-            self.pnet.load_state_dict(torch.load('pretrained_models/pnet_trt.pth'))
-            self.rnet.load_state_dict(torch.load('pretrained_models/rnet_trt.pth'))
-            self.onet.load_state_dict(torch.load('pretrained_models/onet_trt.pth'))
-        else:
-            self.pnet = PNet()
-            self.rnet = RNet()
-            self.onet = ONet()
+        self.pnet = PNet()
+        self.rnet = RNet()
+        self.onet = ONet()
 
         self.device = torch.device('cpu')
         if device is not None:
