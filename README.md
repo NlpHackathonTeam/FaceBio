@@ -25,7 +25,7 @@ This is a repository for face detection on edge devices using an efficient pre-t
     # install the required packages:
     pip install -r requirements
     ```
-   #### TensorRT conversion
+   #### TensorRT conversion - NOT WORKING
     In order to use conversion of torch models to TensorRT first you need to install
     [tortch2rt](https://github.com/NVIDIA-AI-IOT/torch2trt). To trigger this functionality
     you need to activate the appropriate variables in config.yaml file. If it is the first
