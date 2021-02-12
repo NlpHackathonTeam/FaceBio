@@ -13,7 +13,7 @@ This is a repository for face detection on edge devices using an efficient pre-t
 
     ```bash
     # clone this repo:
-    git clone https://github.com/NlpHackathonTeam/FaceBio.git
+    git clone https://github.com/NlpHackathonTeam/FaceBio.git --recurse-submodules --remote-submodules
     
     # create a virtual environment:
     pip3 install virtualenv
